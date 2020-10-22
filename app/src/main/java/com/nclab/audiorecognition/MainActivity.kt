@@ -1,5 +1,6 @@
 package com.nclab.audiorecognition
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -42,7 +43,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECORD_AUDIO), REQUEST_RECORD_AUDIO_PERMISSION)
+        ActivityCompat.requestPermissions(this, arrayOf(
+            android.Manifest.permission.RECORD_AUDIO,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+        ), REQUEST_RECORD_AUDIO_PERMISSION)
 
         tgb_record.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -50,6 +54,11 @@ class MainActivity : AppCompatActivity() {
             } else {
                 stopRecording()
             }
+        }
+
+        btn_choose_song.setOnClickListener {
+            val intent = Intent(this, ChooseSongActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -107,13 +116,10 @@ class MainActivity : AppCompatActivity() {
                 getFFT(prevData + data)
                 data.copyInto(prevData)
             }
-            //Log.wtf("DEBUG", "L=$length")
         }
     }
 
     private fun getFFT(input: ShortArray) {
-
-        //Log.wtf("DEBUG-", input.maxOrNull().toString())
 
         val real = DoubleArray(FFT_SIZE)
         val y = DoubleArray(FFT_SIZE)
